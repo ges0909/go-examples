@@ -1,29 +1,20 @@
-package goroutine
+package main
 
 import (
 	"fmt"
 	"time"
 )
 
-func sayWithFuncLiteral(msg string, delay time.Duration) {
-	go func() {
-		time.Sleep(delay)
-		fmt.Println(msg)
-	}() // Note the parentheses - must call the function.
+func writer() {
+	fmt.Println("function")
 }
 
-func say(msg string, delay time.Duration) {
-	time.Sleep(delay)
-	fmt.Println(msg)
-}
-
-type chanDataType struct {
-	msg   string
-	delay time.Duration
-}
-
-func sayWithChannel(ch chan chanDataType) {
-	d := <-ch
-	time.Sleep(d.delay)
-	fmt.Println(d.msg)
+func main() {
+	go writer() // function
+	go func() { // closure
+		fmt.Println("closure")
+	}()
+	d := time.Duration(1) * time.Second
+	time.Sleep(d)
+	fmt.Println("-- The End.")
 }

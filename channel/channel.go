@@ -1,30 +1,33 @@
-// channel
 package main
 
 import (
 	"fmt"
+	"time"
 )
 
-func main() {
-
-	ch := make(chan int)
-
-	go func() {
-		for i := 1; i <= 10; i++ {
-			ch <- i
-		}
-		close(ch)
-	}()
-
-	n, more := <-ch
-	for more {
-		fmt.Println(n)
-		n, more = <-ch
+func writer(ch chan int) {
+	for i := 1; i <= 10; i++ {
+		ch <- i
 	}
+	close(ch)
+}
 
-	// similiar but more simple
-	//	for n := range ch {
-	//		fmt.Println(n)
-	//	}
-
+func main() {
+	ch := make(chan int)
+	go writer(ch)
+	go func() { // reader
+		n, more := <-ch
+		for more {
+			fmt.Println(n)
+			n, more = <-ch
+		}
+		/** same as loop above but shorter
+		for n := range ch {
+			fmt.Println(n)
+		}
+		*/
+	}()
+	d := time.Duration(1) * time.Second
+	time.Sleep(d)
+	fmt.Println("-- The End.")
 }
